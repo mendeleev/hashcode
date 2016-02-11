@@ -40,21 +40,21 @@
     ordersCount: 0,
 
     getGoods: function(data) {
-      this.goodsCount = data[1];
-      this.goods = data[2];
+      this.goodsCount = Number(data[1]);
+      this.goods = data[2].split(" ").map(Number).sort(function(a,b){return a-b;});
 
       return this.goods;
     },
 
     getWarehouses: function(data) {
-      var count = data[3],
+      var count = Number(data[3]),
           index = 0,
           warehouses = data.slice(4, count*2+4);
 
       while(warehouses[index]) {
         this.warehouses.push({
           coords: warehouses[index++].split(" ").map(Number),
-          items: warehouses[index++].split(" ").map(Number)
+          items: warehouses[index++].split(" ").map(Number).sort(function(a,b){return a-b;})
         });
 
       }
@@ -68,13 +68,13 @@
           startsFrom = (5+warehouses*2),
           orders = data.slice(startsFrom, data.length);
 
-      this.ordersCount = data[(4+warehouses*2)];
+      this.ordersCount = Number(data[(4+warehouses*2)]);
 
       while(orders[index]) {
         this.orders.push({
           coords: orders[index++].split(" ").map(Number),
           count: Number(orders[index++]),
-          items: orders[index++].split(" ").map(Number)
+          items: orders[index++].split(" ").map(Number).sort(function(a,b){return a-b;})
         });
 
       }
@@ -83,11 +83,11 @@
     },
 
     getInitial: function(data) {
-      this.rows = data[0];
-      this.cols = data[1];
-      this.drones = data[2];
-      this.turns = data[3];
-      this.payload = data[4];
+      this.rows = Number(data[0]);
+      this.cols = Number(data[1]);
+      this.drones = Number(data[2]);
+      this.turns = Number(data[3]);
+      this.payload = Number(data[4]);
 
       return {
         rows: this.rows,
@@ -112,6 +112,7 @@
 
     paint.init(parser.cols * paint.tile, parser.rows * paint.tile);
 
+    console.log(JSON.parse(JSON.stringify(parser)));
     console.log(JSON.stringify(parser));
 
   });
