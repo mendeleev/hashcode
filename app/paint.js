@@ -6,16 +6,22 @@
       WAREHOUSE = 2;
 
   var paint = {
-    tile: 4,
+    tile: 2,
 
     init: function(width, height) {
       canvas.width = width || 800;
       canvas.height = height || 600;
     },
 
-    point: function(x, y, color) {
+    render: function(data, color, scale) {
+      for(var i = 0; i < data.length; i++) {
+        this.point(data[i].coords[0], data[i].coords[1], scale, color);
+      }
+    },
+
+    point: function(x, y, scale, color) {
       ctx.fillStyle = color;
-      ctx.fillRect(x*this.tile, y*this.tile, this.tile, this.tile);
+      ctx.fillRect(x*this.tile*scale, y*this.tile*scale, this.tile*scale, this.tile*scale);
     },
 
     paintNumbers: function(x, y, num) {
@@ -41,8 +47,7 @@
 
     getGoods: function(data) {
       this.goodsCount = Number(data[1]);
-      this.goods = data[2].split(" ").map(Number).sort(function(a,b){return a-b;});
-
+      this.goods = data[2].split(" ").map(Number);
       return this.goods;
     },
 
@@ -54,7 +59,7 @@
       while(warehouses[index]) {
         this.warehouses.push({
           coords: warehouses[index++].split(" ").map(Number),
-          items: warehouses[index++].split(" ").map(Number).sort(function(a,b){return a-b;})
+          items: warehouses[index++].split(" ").map(Number)
         });
 
       }
@@ -74,7 +79,7 @@
         this.orders.push({
           coords: orders[index++].split(" ").map(Number),
           count: Number(orders[index++]),
-          items: orders[index++].split(" ").map(Number).sort(function(a,b){return a-b;})
+          items: orders[index++].split(" ").map(Number)
         });
 
       }
@@ -106,14 +111,19 @@
     data = data.split("\n");
     parser.getGoods(data);
     parser.getInitial(data[0].split(" "));
-    parser.getWarehouses(data);
+    var warehouses = parser.getWarehouses(data);
 
-    parser.getOrders(data);
+    var orders = parser.getOrders(data);
 
     paint.init(parser.cols * paint.tile, parser.rows * paint.tile);
 
     console.log(JSON.parse(JSON.stringify(parser)));
     console.log(JSON.stringify(parser));
+
+    console.log(warehouses);
+
+    paint.render(warehouses, "red", 1);
+    paint.render(orders, "grey", 1);
 
   });
 
