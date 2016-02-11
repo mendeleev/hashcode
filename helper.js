@@ -74,29 +74,54 @@ co(function * () {
    *
    * @type {{buildMap: module.exports.buildMap}}
    */
-  module.exports = {
-    setMap: function (r, c) {
-      map.r = r;
-      map.c = c;
-    },
-    send: function (dron, client, order) {
-      dron = {
-        r: 0,
-        c: 0,
-        limit: 500,
-        items: []
-      };
-      client = {
-        r: 0,
-        c: 0,
-        items: [10, 20],
-      }
-          order=[100,100,200]
+  module.exports = function(warehouses){
+    return {
+      setMap: function (r, c) {
+        map.r = r;
+        map.c = c;
+      },
+      send: function (dron, client, order) {
+        dron = {
+          r: 0,
+          c: 0,
+          limit: 500,
+          items: []
+        };
+        client = {
+          r: 0,
+          c: 0,
+          items: [10, 20],
+        }
+        order=[100,100,200]
 
-      while (steps > 0) {
-        if (dron.c != client.c && dron.r != client.r) {
-          if (dron.c != warehouse.c && dron.r != warehouse.r) {
-            //to the warehouse
+        while (steps > 0) {
+          if (dron.c != client.c && dron.r != client.r) {
+            if (dron.c != warehouse.c && dron.r != warehouse.r) {
+              //to the warehouse
+              move({
+                    c: dron.c,
+                    r: dron.r
+                  },
+                  {
+                    c: warehouse.c,
+                    r: warehouse.r
+                  }
+              )
+            } else {
+              //load and move to the client
+              load(dron, order);
+              move({
+                    c: dron.c,
+                    r: dron.r
+                  },
+                  {
+                    c: client.c,
+                    r: client.r
+                  }
+              )
+            }
+          } else {
+            unload(client, dron);
             move({
                   c: dron.c,
                   r: dron.r
@@ -106,35 +131,12 @@ co(function * () {
                   r: warehouse.r
                 }
             )
-          } else {
-            //load and move to the client
-            load(dron, order);
-            move({
-                  c: dron.c,
-                  r: dron.r
-                },
-                {
-                  c: client.c,
-                  r: client.r
-                }
-            )
           }
-        } else {
-          unload(client, dron);
-          move({
-                c: dron.c,
-                r: dron.r
-              },
-              {
-                c: warehouse.c,
-                r: warehouse.r
-              }
-          )
         }
+
       }
 
     }
-
   }
 
 
