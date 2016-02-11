@@ -13,15 +13,19 @@ let fs = require("fs"),
     limits = 500
     ;
 /*const warehouse = {
-  r: 0,
-  c: 0,
-  itemsWeights: [],
-  itemsCounts: []
-};*/
+ r: 0,
+ c: 0,
+ itemsWeights: [],
+ itemsCounts: []
+ };*/
 co(function * () {
   var all = yield  Q.nfcall(fs.readFile, '/var/www/hashcode/app/files/parsed/mother_of_all_warehouses.in', 'utf-8');
   console.log("=================");
   console.log(JSON.parse(all));
+  function stepLength(from, to) {
+    return Math.floor(Math.sqrt(Math.pow((from.r - to.r), 2) + Math.pow((from.c - to.c), 2)));
+  }
+
   function move(from, to, dron) {
     if ((steps - 1) > 0 && ((dron.turns - 1) > 0)) {
       commands.push({
@@ -55,7 +59,7 @@ co(function * () {
   }
 
   function unload(client, dron) {
-    if ((steps - 1) > 0&&((dron.turns - 1) > 0)) {
+    if ((steps - 1) > 0 && ((dron.turns - 1) > 0)) {
       while (dron.limit) {
         client.items = union(client.items, dron.items);
         dron.items = [];
@@ -74,26 +78,44 @@ co(function * () {
    *
    * @type {{buildMap: module.exports.buildMap}}
    */
-  module.exports = function(warehouses){
+  module.exports = function (warehouses, clients) {
     return {
       setMap: function (r, c) {
         map.r = r;
         map.c = c;
       },
       send: function (dron, client, order) {
-        let warehouse=_.first(warehouses);
-        /*dron = {
-          r: 0,
-          c: 0,
-          limit: 500,
-          items: []
-        };
-        client = {
-          r: 0,
-          c: 0,
-          items: [10, 20],
+        /**
+         * w-warehous,
+         * c-client
+         * @param dron
+         * @param type
+         */
+        function findNearest(dron, type) {
+          let fullWInfo = _.map((type === 'w') ? warehouses : clients, (w)=> {
+            return {
+              steps: stepLength(dron, (type === 'w') ? warehouses : clients),
+              item: w
+            };
+          });
+          return _.min(fullWInfo, (w)=> {
+            return w.steps
+          }).item
         }
-        order=[100,100,200]*/
+
+        let warehouse = _.first(warehouses);
+        /*dron = {
+         r: 0,
+         c: 0,
+         limit: 500,
+         items: []
+         };
+         client = {
+         r: 0,
+         c: 0,
+         items: [10, 20],
+         }
+         order=[100,100,200]*/
 
         while (steps > 0) {
           if (dron.c != client.c && dron.r != client.r) {
