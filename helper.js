@@ -104,19 +104,6 @@ co(function * () {
         }
 
         let warehouse = _.first(warehouses);
-        /*dron = {
-         r: 0,
-         c: 0,
-         limit: 500,
-         items: []
-         };
-         client = {
-         r: 0,
-         c: 0,
-         items: [10, 20],
-         }
-         order=[100,100,200]*/
-
         while (steps > 0) {
           if (dron.c != client.c && dron.r != client.r) {
             if (dron.c != warehouse.c && dron.r != warehouse.r) {
