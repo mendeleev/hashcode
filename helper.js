@@ -78,7 +78,18 @@ co(function * () {
         } else {
           //load and move to the client
           load(dron,order)
+          move({
+                c: dron.c,
+                r: dron.r
+              },
+              {
+                c: client.c,
+                r: client.r
+              }
+          )
         }
+      }else{
+
       }
     }
 
