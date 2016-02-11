@@ -85,8 +85,7 @@ co(function * () {
       client = {
         r: 0,
         c: 0,
-        itemsWeights: [10, 20],
-        itemsCounts: [2, 3]
+        items: [10, 20],
       };
       while (steps > 0) {
         if (dron.c != client.c && dron.r != client.r) {
