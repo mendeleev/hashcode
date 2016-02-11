@@ -88,13 +88,12 @@ co(function * () {
           }).item
         }
 
-        function load(dron, order) {
+        function load(dron) {
           if (((steps - 1) > 0) && ((dron.turns - 1) > 0)) {
             while (dron.limit) {
-              warehouse.items.shift();
-              dron.items.push(order);
-              dron.limit -= order;
-
+              let product = warehouse.items.shift();
+              dron.items.push(product);
+              dron.limit -= product;
             }
             dron.turns--;
             steps--;
