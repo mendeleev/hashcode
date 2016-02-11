@@ -22,7 +22,7 @@ module.exports = function (maxLoad) {
       itemType = Number(itemType);
       let sum = this.items.reduce(sum, 0);
       if (this.items.reduce(sum, 0) <= maxLoad) {
-        this.items.push(itemType)
+        this.items.push(itemType);
         return sum + itemType;
       } else {
         throw new Error(`Дрон не может взять этот груз (${itemType}). Превышен допустимый лимит веса (${maxLoad})`)
