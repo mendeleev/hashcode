@@ -48,17 +48,15 @@
 
     getWarehouses: function(data) {
       var count = data[3],
-          index = 4,
-          coords;
+          index = 0,
+          warehouses = data.slice(4, count*2+4);
 
-      for(var i = 0; i < count; i++) {
-        coords = data[index++];
-
+      while(warehouses[index]) {
         this.warehouses.push({
-          x: coords[0],
-          y: coords[1],
-          items: data[index++]
+          coords: warehouses[index++].split(" ").map(Number),
+          items: warehouses[index++].split(" ").map(Number)
         });
+
       }
 
       return this.warehouses;
@@ -66,7 +64,6 @@
 
     getOrders: function(data) {
       var warehouses = this.warehouses.length,
-          coords,
           index = 0,
           startsFrom = (5+warehouses*2),
           orders = data.slice(startsFrom, data.length);
@@ -104,7 +101,7 @@
 
 
   $.ajax({
-    "url": "app/files/mother_of_all_warehouses.in"
+    "url": "app/files/redundancy.in"
   }).then(function(data) {
     data = data.split("\n");
     parser.getGoods(data);
