@@ -15,5 +15,10 @@
   "bugs": {
     "url": "https://github.com/mendeleev/hashcode/issues"
   },
-  "homepage": "https://github.com/mendeleev/hashcode#readme"
+  "homepage": "https://github.com/mendeleev/hashcode#readme",
+  "dependencies": {
+    "co": "^4.6.0",
+    "q": "^1.4.1"
+  },
+  "devDependencies": {}
 }

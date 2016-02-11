@@ -5,7 +5,7 @@ let fs = require("fs"),
     parser = require("./parser");
 
 
-co(function * (){
+co(function * () {
 
 });
 
