@@ -9,7 +9,8 @@ let fs = require("fs"),
       c: 0
     },
     commands = [],
-    steps=1000
+    steps = 1000,
+    limits=500
     ;
 const warehouse = {
   r: 0,
@@ -21,23 +22,48 @@ co(function * () {
   var all = yield  Q.nfcall(fs.readFile, '/var/www/hashcode/app/files/parsed/mother_of_all_warehouses.in', 'utf-8');
   console.log("=================");
   console.log(JSON.parse(all));
-  function move(from, to) {
-    commands.push({
-      length: Math.floor(Math.sqrt(Math.pow((from.r - to.r), 2) + Math.pow((from.c - to.c), 2))),
-      from: from,
-      to: to
-    });
-    steps-=Math.floor(Math.sqrt(Math.pow((from.r - to.r), 2) + Math.pow((from.c - to.c), 2)));
+  function move(from, to,dron) {
+    if ((steps - 1) > 0) {
+      commands.push({
+        length: Math.floor(Math.sqrt(Math.pow((from.r - to.r), 2) + Math.pow((from.c - to.c), 2))),
+        from: from,
+        to: to
+      });
+      dron.r=to.r;
+      dron.c=to.c;
+      steps -= Math.floor(Math.sqrt(Math.pow((from.r - to.r), 2) + Math.pow((from.c - to.c), 2)));
+    } else {
+      throw new Error;
+    }
   }
 
-  function load(dron,order) {
-    while(dron.limit){
-      let oneOrder=order.shift();
-      dron.items.push(oneOrder);
-      warehouse.items.shift();
-      dron.limit-=oneOrder;
+  function load(dron, order) {
+    if ((steps - 1) > 0) {
+      while (dron.limit) {
+        let oneOrder = order.shift();
+        warehouse.items.shift();
+        dron.items.push(oneOrder);
+        dron.limit -= oneOrder;
+      }
+      steps--;
+    } else {
+      throw new Error;
     }
-    steps--;
+
+  }
+  function unload(client,dron){
+    if ((steps - 1) > 0) {
+      while (dron.limit) {
+        client.items=union(client.items,dron.items);
+        dron.items=[];
+        dron.limit = limits;
+      }
+      dron.r=client.r;
+      dron.c=client.c;
+      steps--;
+    } else {
+      throw new Error;
+    }
   }
 
   /**2x2
@@ -49,7 +75,7 @@ co(function * () {
       map.r = r;
       map.c = c;
     },
-    send: function (dron, client,order) {
+    send: function (dron, client, order) {
       dron = {
         r: 0,
         c: 0,
@@ -62,10 +88,34 @@ co(function * () {
         itemsWeights: [10, 20],
         itemsCounts: [2, 3]
       };
-
-      if (dron.c != client.c && dron.r != client.r) {
-        if (dron.c != warehouse.c && dron.r != warehouse.r) {
-          //to the warehouse
+      while (steps > 0) {
+        if (dron.c != client.c && dron.r != client.r) {
+          if (dron.c != warehouse.c && dron.r != warehouse.r) {
+            //to the warehouse
+            move({
+                  c: dron.c,
+                  r: dron.r
+                },
+                {
+                  c: warehouse.c,
+                  r: warehouse.r
+                }
+            )
+          } else {
+            //load and move to the client
+            load(dron, order);
+            move({
+                  c: dron.c,
+                  r: dron.r
+                },
+                {
+                  c: client.c,
+                  r: client.r
+                }
+            )
+          }
+        } else {
+          unload(client,dron);
           move({
                 c: dron.c,
                 r: dron.r
@@ -75,30 +125,9 @@ co(function * () {
                 r: warehouse.r
               }
           )
-        } else {
-          //load and move to the client
-          load(dron,order)
-          move({
-                c: dron.c,
-                r: dron.r
-              },
-              {
-                c: client.c,
-                r: client.r
-              }
-          )
         }
-      }else{
-        move({
-              c: dron.c,
-              r: dron.r
-            },
-            {
-              c: warehouse.c,
-              r: warehouse.r
-            }
-        )
       }
+
     }
 
   }
