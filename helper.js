@@ -8,7 +8,8 @@ let fs = require("fs"),
       r: 0,
       c: 0
     },
-    commands = []
+    commands = [],
+    steps=1000
     ;
 const warehouse = {
   r: 0,
@@ -17,19 +18,26 @@ const warehouse = {
   itemsCounts: []
 };
 co(function * () {
+  var all = yield  Q.nfcall(fs.readFile, '/var/www/hashcode/app/files/parsed/mother_of_all_warehouses.in', 'utf-8');
+  console.log("=================");
+  console.log(JSON.parse(all));
   function move(from, to) {
     commands.push({
       length: Math.floor(Math.sqrt(Math.pow((from.r - to.r), 2) + Math.pow((from.c - to.c), 2))),
       from: from,
       to: to
     });
+    steps-=Math.floor(Math.sqrt(Math.pow((from.r - to.r), 2) + Math.pow((from.c - to.c), 2)));
   }
 
-  function load() {
-    commands.push({
-      length: 1,
-      text: 'load'
-    });
+  function load(dron,order) {
+    while(dron.limit){
+      let oneOrder=order.shift();
+      dron.items.push(oneOrder);
+      warehouse.items.shift();
+      dron.limit-=oneOrder;
+    }
+    steps--;
   }
 
   /**2x2
@@ -41,19 +49,20 @@ co(function * () {
       map.r = r;
       map.c = c;
     },
-    send: function (dron, client) {
-      let dron = {
-            r: 0,
-            c: 0,
-            load: 500,
-            items: []
-          },
-          client = {
-            r: 0,
-            c: 0,
-            itemsWeights: [10, 20],
-            itemsCounts: [2, 3]
-          }
+    send: function (dron, client,order) {
+      dron = {
+        r: 0,
+        c: 0,
+        limit: 500,
+        items: []
+      };
+      client = {
+        r: 0,
+        c: 0,
+        itemsWeights: [10, 20],
+        itemsCounts: [2, 3]
+      };
+
       if (dron.c != client.c && dron.r != client.r) {
         if (dron.c != warehouse.c && dron.r != warehouse.r) {
           //to the warehouse
@@ -68,7 +77,7 @@ co(function * () {
           )
         } else {
           //load and move to the client
-          load()
+          load(dron,order)
         }
       }
     }
@@ -76,4 +85,6 @@ co(function * () {
   }
 
 
+}).catch((e)=> {
+  console.log(e);
 });
