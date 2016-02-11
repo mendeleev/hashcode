@@ -42,21 +42,6 @@ co(function * () {
     }
   }
 
-  function load(dron, order) {
-    if (((steps - 1) > 0) && ((dron.turns - 1) > 0)) {
-      while (dron.limit) {
-        warehouse.items.shift();
-        dron.items.push(order);
-        dron.limit -= order;
-
-      }
-      dron.turns--;
-      steps--;
-    } else {
-      throw new Error;
-    }
-
-  }
 
   function unload(client, dron) {
     if ((steps - 1) > 0 && ((dron.turns - 1) > 0)) {
@@ -101,6 +86,22 @@ co(function * () {
           return _.min(fullWInfo, (w)=> {
             return w.steps
           }).item
+        }
+
+        function load(dron, order) {
+          if (((steps - 1) > 0) && ((dron.turns - 1) > 0)) {
+            while (dron.limit) {
+              warehouse.items.shift();
+              dron.items.push(order);
+              dron.limit -= order;
+
+            }
+            dron.turns--;
+            steps--;
+          } else {
+            throw new Error;
+          }
+
         }
 
         let warehouse = _.first(warehouses);
