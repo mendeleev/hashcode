@@ -89,7 +89,15 @@ co(function * () {
           )
         }
       }else{
-
+        move({
+              c: dron.c,
+              r: dron.r
+            },
+            {
+              c: warehouse.c,
+              r: warehouse.r
+            }
+        )
       }
     }
 
