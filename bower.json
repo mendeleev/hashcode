@@ -1,0 +1,21 @@
+{
+  "name": "hashcode",
+  "description": "google hash code project for online qualification round",
+  "main": "index.js",
+  "authors": [
+    "priadko <andrii.priadko@ria.com>"
+  ],
+  "license": "ISC",
+  "homepage": "https://github.com/mendeleev/hashcode",
+  "moduleType": [],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.2.0"
+  }
+}

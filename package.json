@@ -1,0 +1,19 @@
+{
+  "name": "hashcode",
+  "version": "1.0.0",
+  "description": "google hash code project for online qualification round",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mendeleev/hashcode.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mendeleev/hashcode/issues"
+  },
+  "homepage": "https://github.com/mendeleev/hashcode#readme"
+}
