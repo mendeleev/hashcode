@@ -12,12 +12,12 @@ let fs = require("fs"),
     steps = 1000,
     limits = 500
     ;
-const warehouse = {
+/*const warehouse = {
   r: 0,
   c: 0,
   itemsWeights: [],
   itemsCounts: []
-};
+};*/
 co(function * () {
   var all = yield  Q.nfcall(fs.readFile, '/var/www/hashcode/app/files/parsed/mother_of_all_warehouses.in', 'utf-8');
   console.log("=================");
@@ -81,7 +81,8 @@ co(function * () {
         map.c = c;
       },
       send: function (dron, client, order) {
-        dron = {
+        let warehouse=_.first(warehouses);
+        /*dron = {
           r: 0,
           c: 0,
           limit: 500,
@@ -92,7 +93,7 @@ co(function * () {
           c: 0,
           items: [10, 20],
         }
-        order=[100,100,200]
+        order=[100,100,200]*/
 
         while (steps > 0) {
           if (dron.c != client.c && dron.r != client.r) {
