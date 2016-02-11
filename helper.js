@@ -11,10 +11,10 @@ let fs = require("fs"),
     ;
 
 co(function * () {
-  function calculStep(from,to){
-    var x=from.r-to.r;
-    return ;
+  function calculStep(from, to) {
+    return  Math.floor(Math.sqrt(Math.pow((from.r - to.r), 2) + Math.pow((from.c - to.c), 2)));
   }
+
   /**2x2
    *
    * @type {{buildMap: module.exports.buildMap}}
@@ -29,12 +29,12 @@ co(function * () {
             r: 0,
             c: 0,
             load: 500,
-        items
+            items
           },
           warehouse = {
             r: 0,
             c: 0,
-            items :[]
+            items: []
           }
     }
 

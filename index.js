@@ -6,15 +6,15 @@ let fs = require("fs"),
     parser = require("./parser"),
     clients = [
       {
-        x: 2,
-        y: 2
+        r: 2,
+        c: 2
       }
     ],
     orders = [
       {
         id: 100500,
-        x: 2,
-        y: 2,
+        r: 2,
+        c: 2,
         goods: [1, 2, 3],
         counts: [1, 1, 1]
       }
@@ -36,6 +36,11 @@ let fs = require("fs"),
 
 
 co(function * () {
+
+  function calculStep(from, to) {
+    return  Math.floor(Math.sqrt(Math.pow((from.r - to.r), 2) + Math.pow((from.c - to.c), 2)));
+  }
+
   let content = yield Q.nfcall(fs.readFile, process.argv.pop());
 
   while (clients.length) {
@@ -44,7 +49,7 @@ co(function * () {
           client = clients.pop(),
           warehouse = warehouses.pop(),
           order = orders.filter((order) => {
-            return client.x === order.x && client.y === order.y;
+            return client.r === order.r && client.c === order.c;
           }).pop();
       while (order.goods.length) {
         let item = order.goods.pop(),
